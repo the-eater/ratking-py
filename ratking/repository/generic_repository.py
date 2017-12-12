@@ -1,6 +1,8 @@
 class GenericRepository:
+    loaded = False
+
     def load(self):
-        pass
+        self.loaded = True
 
     def save(self):
         pass
@@ -14,6 +16,23 @@ class GenericRepository:
 
     def get_versions(self, name):
         return []
+
+    def get_latest(self, name):
+        rats = self.get_versions(name)
+        if len(rats) == 0:
+            return None
+
+        latest_rat = None
+
+        for rat in rats:
+            if latest_rat is None:
+                latest_rat = rat
+                continue
+
+            if latest_rat.version < rat.version:
+                latest_rat = rat
+
+        return latest_rat
 
     def put(self, rat):
         pass

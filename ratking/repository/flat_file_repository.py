@@ -1,14 +1,15 @@
-from .generic_repository import GenericRepository
+from .memory_repository import MemoryRepository
 import toml
 
 
-class FlatFileRepository(GenericRepository):
+class FlatFileRepository(MemoryRepository):
     file = None
     name = None
     read_only = True
     rats = []
 
     def __init__(self, file, read_only=True):
+        super().__init__([], None)
         self.file = file
         self.read_only = read_only
 
@@ -24,6 +25,7 @@ class FlatFileRepository(GenericRepository):
             },
             rats_file
         )
+
         rats_file.close()
 
     def load(self):
@@ -32,15 +34,4 @@ class FlatFileRepository(GenericRepository):
         self.rats = repo.rats
         self.name = repo.name
         rats_file.close()
-
-    def get(self, name, version):
-        for rat in self.rats:
-            if rat.name == name and rat.version == version:
-                return rat
-
-        return None
-
-    def get_versions(self, name):
-        for rat in self.rats:
-            if rat.name == name:
-                yield rat
+        self.loaded = True
