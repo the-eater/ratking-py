@@ -1,0 +1,12 @@
+name="Test repo"
+
+[[rat]]
+name="help"
+version="v1.0"
+
+    [rats.needs]
+    test=">=v4"
+
+[[rat]]
+name="test"
+version="v5"

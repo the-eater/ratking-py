@@ -1,0 +1,3 @@
+# Ratking
+
+Abstracted package management
