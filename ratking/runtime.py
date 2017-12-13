@@ -2,7 +2,7 @@ import os
 from docopt import docopt
 from . import Ratking
 from .repository import FlatFileRepository
-
+from .version_selector import SelectorParser, VersionSelectorSemantics
 
 class Runtime:
     ratking = None
@@ -20,6 +20,7 @@ Usage:
     rk remove <name>
     rk list-rats <repo>
     rk resolve [--repo <repo>] <installable>...
+    rk version-selector <version-selector>
     rk (-v | -h)
 
 Options:
@@ -32,6 +33,9 @@ Options:
         if arguments['resolve']:
             self.cmd_resolve(arguments)
 
+        if arguments['version-selector']:
+            self.cmd_version_selector(arguments)
+
     def load_ratking(self):
         self.ratking = Ratking()
 
@@ -43,6 +47,10 @@ Options:
     def cmd_resolve(self, arguments):
         self.load_ratking()
 
-        rats = self.ratking.resolve(names=arguments['<installable>'])
+        rats = self.ratking.resolve(hints=arguments['<installable>'])
 
         print(rats)
+
+    def cmd_version_selector(self, arguments):
+        x = SelectorParser()
+        print(x.parse(arguments['<version-selector>'], semantics=VersionSelectorSemantics()))

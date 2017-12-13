@@ -8,6 +8,7 @@ and_op
     =
     | '&'
     | 'and'
+    | 'but'
     ;
 
 or_op
@@ -30,27 +31,70 @@ binary_op
 
 version_op
     =
-    | '>='
-    | 'greater' 'than'
-    | '<='
-    | 'less' 'than'
+    | greater_than_equals_op
+    | greater_than_op
+    | less_than_equals_op
+    | less_than_op
+    | about_op
+    | exact_op
+    | binary_op
+    ;
+
+exact_op
+    =
+    | '=='
     | '='
     | 'exact'
+    | 'is'
+    ;
+
+about_op
+    =
     | '~'
     | 'about'
-    | binary_op
+    | 'abt'
+    ;
+
+greater_than_equals_op
+    =
+    | '>='
+    | 'greater' 'than' [ 'or' ] 'equals'
+    | 'gte'
+    ;
+
+less_than_equals_op
+    =
+    | '>='
+    | 'less' 'than' [ 'or' ] 'equals'
+    | 'lte'
+    ;
+
+greater_than_op
+    =
+    | '>'
+    | 'greater' 'than'
+    | 'gt'
+    ;
+
+less_than_op
+    =
+    | '<'
+    | 'less' 'than'
+    | 'lt'
     ;
 
 expression
     =
-    | selector comb_op expression
+    | union
     | selector
     ;
+
+union = left:selector mid:comb_op right:expression ;
 
 selector
     =
     | version_op version
     | binary_op selector
     | version
-    | '(' expression ')'
+    | '(' @:expression ')'
     ;
