@@ -93,8 +93,7 @@ union = left:selector mid:comb_op right:expression ;
 
 selector
     =
-    | version_op version
+    | ( version_op | `"="` ) version
     | binary_op selector
-    | version
     | '(' @:expression ')'
     ;

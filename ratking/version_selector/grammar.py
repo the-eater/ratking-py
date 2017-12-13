@@ -249,13 +249,17 @@ class SelectorParser(Parser):
     def _selector_(self):  # noqa
         with self._choice():
             with self._option():
-                self._version_op_()
+                with self._group():
+                    with self._choice():
+                        with self._option():
+                            self._version_op_()
+                        with self._option():
+                            self._constant('=')
+                        self._error('no available options')
                 self._version_()
             with self._option():
                 self._binary_op_()
                 self._selector_()
-            with self._option():
-                self._version_()
             with self._option():
                 self._token('(')
                 self._expression_()
