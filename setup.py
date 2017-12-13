@@ -14,7 +14,8 @@ setup(
     },
     install_requires=[
         'toml',
-        'docopt'
+        'docopt',
+        'tatsu'
     ],
     include_package_data=True,
     license='MIT',
