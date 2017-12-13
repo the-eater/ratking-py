@@ -5,7 +5,7 @@ name="help"
 version="v1.0"
 
     [rats.needs]
-    test=">=v4"
+    test='>= v5.6 & !v6.7'
 
 [[rat]]
 name="test"

@@ -34,5 +34,8 @@ class GenericRepository:
 
         return latest_rat
 
+    def get_by_selector(self, selector):
+        return [rat for rat in self.get_versions(selector.name) if selector.matches(rat)]
+
     def put(self, rat):
         pass

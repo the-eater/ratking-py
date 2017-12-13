@@ -18,6 +18,4 @@ class MemoryRepository(GenericRepository):
         return None
 
     def get_versions(self, name):
-        for rat in self.rats:
-            if rat.name == name:
-                yield rat
+        return [rat for rat in self.rats if rat.name == name]

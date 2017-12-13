@@ -1,0 +1,56 @@
+@@grammar :: Selector
+
+start = expression $ ;
+
+version = /v?[0-9][a-z0-9-*_\.]*/ ;
+
+and_op
+    =
+    | '&'
+    | 'and'
+    ;
+
+or_op
+    =
+    | '|'
+    | 'or'
+    ;
+
+comb_op
+    =
+    | or_op
+    | and_op
+    ;
+
+binary_op
+    =
+    | '!'
+    | 'not'
+    ;
+
+version_op
+    =
+    | '>='
+    | 'greater' 'than'
+    | '<='
+    | 'less' 'than'
+    | '='
+    | 'exact'
+    | '~'
+    | 'about'
+    | binary_op
+    ;
+
+expression
+    =
+    | selector comb_op expression
+    | selector
+    ;
+
+selector
+    =
+    | version_op version
+    | binary_op selector
+    | version
+    | '(' expression ')'
+    ;
