@@ -1,5 +1,6 @@
 from .grammar import SelectorSemantics
 from .clauses import *
+from ..rat_version import RatVersion
 
 
 class VersionSelectorSemantics(SelectorSemantics):
@@ -14,6 +15,9 @@ class VersionSelectorSemantics(SelectorSemantics):
             return '!'
 
         return ast
+
+    def version(self, ast):
+        return RatVersion(ast)
 
     def exact_op(self, ast):
         return '='
@@ -32,6 +36,9 @@ class VersionSelectorSemantics(SelectorSemantics):
 
     def less_than_op(self, ast):
         return '<'
+
+    def any_op(self, ast):
+        return AnyClause()
 
     def union(self, ast):
         if ast.mid == '&':

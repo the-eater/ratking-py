@@ -89,6 +89,12 @@ range_op
     | ( 'from' | `from` ) version ( 'to' | '-' | '...' ) version
     ;
 
+any_op
+    =
+    | '*'
+    | 'any'
+    ;
+
 expression
     =
     | union
@@ -103,6 +109,7 @@ invert = binary_op selector ;
 
 selector
     =
+    | any_op
     | range_op
     | version_selector
     | invert

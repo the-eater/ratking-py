@@ -1,12 +1,26 @@
 name="Test repo"
 
-[[rat]]
+[[rats]]
 name="help"
 version="v1.0"
 
     [rats.needs]
     test='>= v5.6 & !v6.7'
 
-[[rat]]
+[[rats]]
+name="help"
+version="v0.1"
+
+    [rats.needs]
+    test='v7'
+
+[[rats]]
 name="test"
 version="v5"
+
+[[rats]]
+name="test"
+version="v7"
+
+    [rats.needs]
+    help='greater than v0'

@@ -1,10 +1,9 @@
 from .generic_repository import GenericRepository
-import toml
 
 
 class MemoryRepository(GenericRepository):
     name = None
-    rats = []
+    rats = None
 
     def __init__(self, rats, name='In-memory repo'):
         self.rats = rats

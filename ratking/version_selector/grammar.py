@@ -256,6 +256,15 @@ class SelectorParser(Parser):
             self._error('no available options')
 
     @tatsumasu()
+    def _any_op_(self):  # noqa
+        with self._choice():
+            with self._option():
+                self._token('*')
+            with self._option():
+                self._token('any')
+            self._error('no available options')
+
+    @tatsumasu()
     def _expression_(self):  # noqa
         with self._choice():
             with self._option():
@@ -296,6 +305,8 @@ class SelectorParser(Parser):
     @tatsumasu()
     def _selector_(self):  # noqa
         with self._choice():
+            with self._option():
+                self._any_op_()
             with self._option():
                 self._range_op_()
             with self._option():
@@ -351,6 +362,9 @@ class SelectorSemantics(object):
         return ast
 
     def range_op(self, ast):  # noqa
+        return ast
+
+    def any_op(self, ast):  # noqa
         return ast
 
     def expression(self, ast):  # noqa

@@ -2,8 +2,13 @@ class GenericClause:
     def test(self, value):
         pass
 
-    def __str__(self):
+    def __repr__(self):
         return self.__class__.__name__ + '()'
+
+
+class AnyClause(GenericClause):
+    def test(self, value):
+        return True
 
 
 class UnionClause(GenericClause):
@@ -14,7 +19,7 @@ class UnionClause(GenericClause):
         self.left = left
         self.right = right
 
-    def __str__(self):
+    def __repr__(self):
         return self.__class__.__name__ + '(' + str(self.left) + ', ' + str(self.right) + ')'
 
 
@@ -40,9 +45,22 @@ class SimpleClause(GenericClause):
         self.version = version
 
     def test(self, value):
-        pass
+        if self.op == '>':
+            return value > self.version
 
-    def __str__(self):
+        if self.op == '<':
+            return value < self.version
+
+        if self.op == '=':
+            return value == self.version
+
+        if self.op == '>=':
+            return value >= self.version
+
+        if self.op == '<=':
+            return value <= self.version
+
+    def __repr__(self):
         return self.__class__.__name__ + '(' + str(self.op) + ', ' + str(self.version) + ')'
 
 
@@ -55,5 +73,5 @@ class InverseClause(GenericClause):
     def test(self, value):
         return not self.clause.test(value)
 
-    def __str__(self):
+    def __repr__(self):
         return self.__class__.__name__ + '(' + str(self.clause) + ')'

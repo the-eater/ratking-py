@@ -1,17 +1,21 @@
 from .memory_repository import MemoryRepository
+from ratking import Rat
 import toml
+import os
 
 
 class FlatFileRepository(MemoryRepository):
     file = None
     name = None
     read_only = True
-    rats = []
+    rats = None
 
     def __init__(self, file, read_only=True):
         super().__init__([], None)
         self.file = file
         self.read_only = read_only
+        self.rats = []
+        self.name = "Nameless flat-file repo"
 
     def save(self):
         if self.read_only:
@@ -29,9 +33,17 @@ class FlatFileRepository(MemoryRepository):
         rats_file.close()
 
     def load(self):
+        if not os.path.exists(self.file):
+            if not self.read_only:
+                self.save()
+
+            self.loaded = None
+            return
+
         rats_file = open(self.file, 'r+')
         repo = toml.load(rats_file)
-        self.rats = repo.rats
-        self.name = repo.name
+        rats = repo['rats'] if 'rats' in repo else []
+        self.rats = [Rat.from_dict(rat) for rat in rats]
+        self.name = repo['name'] if 'name' in repo else "Nameless flat-file repo"
         rats_file.close()
         self.loaded = True

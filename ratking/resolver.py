@@ -13,17 +13,18 @@ class Resolver:
 
         selector = selectors[0]
 
-        if current_selection[selector.name] is not None:
+        if selector.name in current_selection:
             if selector.matches(current_selection[selector.name]):
-                return self.resolve(selector[1:], current_selection)
+                return self.resolve(selectors[1:], current_selection)
             else:
                 return None
 
         rats = self.repo.get_by_selector(selector)
 
         for rat in rats:
+
             current_selection[rat.name] = rat
-            result = self.resolve(selector[1:] + rat.needs, current_selection)
+            result = self.resolve(selectors[1:] + rat.needs, current_selection)
 
             if result is not None:
                 return result

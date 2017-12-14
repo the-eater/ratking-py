@@ -1,8 +1,10 @@
 import os
 from docopt import docopt
-from . import Ratking
-from .repository import FlatFileRepository
+from . import Ratking, RatVersion
+from .repository import FlatFileRepository, build_repository
 from .version_selector import SelectorParser, VersionSelectorSemantics
+from .rat_selector import RatSelector
+
 
 class Runtime:
     ratking = None
@@ -16,17 +18,17 @@ class Runtime:
 rk - ratking's all purpose package manager
 
 Usage:
-    rk install [--repo <repo>] <installable>...
+    rk install [--repo=<repo>] <installable>...
     rk remove <name>
     rk list-rats <repo>
-    rk resolve [--repo <repo>] <installable>...
-    rk version-selector <version-selector>
+    rk resolve [--repo=<repo>] <installable>...
+    rk version-selector [--test=<version>] <version-selector>
     rk (-v | -h)
 
 Options:
     -h --help     Show this page
     -v --version  Show version of rk
-    --repo -r     Select repo to use for this action
+    --repo=<repo> -r=<repo>    Select repo to use for this action
         """
         arguments = docopt(str(self.main.__doc__), version="ratking v0.1")
 
@@ -36,7 +38,7 @@ Options:
         if arguments['version-selector']:
             self.cmd_version_selector(arguments)
 
-    def load_ratking(self):
+    def load_ratking(self, arguments):
         self.ratking = Ratking()
 
         os.makedirs(self.home, exist_ok=True)
@@ -44,13 +46,24 @@ Options:
 
         self.ratking.add_repository(local_repo)
 
-    def cmd_resolve(self, arguments):
-        self.load_ratking()
+        if arguments['--repo']:
+            repo = build_repository(arguments['--repo'])
+            if repo is not None:
+                self.ratking.add_repository(repo)
 
-        rats = self.ratking.resolve(hints=arguments['<installable>'])
+    def cmd_resolve(self, arguments):
+        self.load_ratking(arguments)
+
+        rats = self.ratking.resolve([RatSelector.from_str(selector) for selector in arguments['<installable>']])
 
         print(rats)
 
     def cmd_version_selector(self, arguments):
-        x = SelectorParser()
-        print(x.parse(arguments['<version-selector>'], semantics=VersionSelectorSemantics()))
+        parser = SelectorParser()
+        result_selector = parser.parse(arguments['<version-selector>'], semantics=VersionSelectorSemantics())
+
+        print(result_selector)
+
+        if arguments['--test']:
+            version = RatVersion(arguments['--test'])
+            print('tested with %s: %s' % (version, result_selector.test(version)))
