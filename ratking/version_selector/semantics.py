@@ -1,4 +1,6 @@
 from .grammar import SelectorSemantics
+from .clauses import *
+
 
 class VersionSelectorSemantics(SelectorSemantics):
     def or_op(self, ast):
@@ -32,4 +34,24 @@ class VersionSelectorSemantics(SelectorSemantics):
         return '<'
 
     def union(self, ast):
-        return [ast.mid, ast.left, ast.right]
+        if ast.mid == '&':
+            return AndClause(ast.left, ast.right)
+
+        return OrClause(ast.left, ast.right)
+
+    def invert(self, ast):
+        if isinstance(ast[1], InverseClause):
+            return ast[1].clause
+
+        return InverseClause(ast[1])
+
+    def version_selector(self, ast):
+        return SimpleClause(ast[0], ast[1])
+
+    def range_op(self, ast):
+        inclusive = ast[0] == 'from'
+
+        if inclusive:
+            return AndClause(SimpleClause('>=', ast[1]), SimpleClause('<=', ast[3]))
+
+        return AndClause(SimpleClause('>', ast[1]), SimpleClause('<', ast[3]))
