@@ -141,8 +141,6 @@ class SelectorParser(Parser):
                 self._about_op_()
             with self._option():
                 self._exact_op_()
-            with self._option():
-                self._binary_op_()
             self._error('no available options')
 
     @tatsumasu()
@@ -224,6 +222,40 @@ class SelectorParser(Parser):
             self._error('no available options')
 
     @tatsumasu()
+    def _range_op_(self):  # noqa
+        with self._choice():
+            with self._option():
+                self._token('between')
+                self._version_()
+                self._token('and')
+                self._version_()
+            with self._option():
+                self._constant('between')
+                self._version_()
+                self._token('..')
+                self._version_()
+            with self._option():
+                with self._group():
+                    with self._choice():
+                        with self._option():
+                            self._token('from')
+                        with self._option():
+                            self._constant('from')
+                        self._error('no available options')
+                self._version_()
+                with self._group():
+                    with self._choice():
+                        with self._option():
+                            self._token('to')
+                        with self._option():
+                            self._token('-')
+                        with self._option():
+                            self._token('...')
+                        self._error('no available options')
+                self._version_()
+            self._error('no available options')
+
+    @tatsumasu()
     def _expression_(self):  # noqa
         with self._choice():
             with self._option():
@@ -246,20 +278,30 @@ class SelectorParser(Parser):
         )
 
     @tatsumasu()
+    def _version_selector_(self):  # noqa
+        with self._group():
+            with self._choice():
+                with self._option():
+                    self._version_op_()
+                with self._option():
+                    self._constant('=')
+                self._error('no available options')
+        self._version_()
+
+    @tatsumasu()
+    def _invert_(self):  # noqa
+        self._binary_op_()
+        self._selector_()
+
+    @tatsumasu()
     def _selector_(self):  # noqa
         with self._choice():
             with self._option():
-                with self._group():
-                    with self._choice():
-                        with self._option():
-                            self._version_op_()
-                        with self._option():
-                            self._constant('=')
-                        self._error('no available options')
-                self._version_()
+                self._range_op_()
             with self._option():
-                self._binary_op_()
-                self._selector_()
+                self._version_selector_()
+            with self._option():
+                self._invert_()
             with self._option():
                 self._token('(')
                 self._expression_()
@@ -308,10 +350,19 @@ class SelectorSemantics(object):
     def less_than_op(self, ast):  # noqa
         return ast
 
+    def range_op(self, ast):  # noqa
+        return ast
+
     def expression(self, ast):  # noqa
         return ast
 
     def union(self, ast):  # noqa
+        return ast
+
+    def version_selector(self, ast):  # noqa
+        return ast
+
+    def invert(self, ast):  # noqa
         return ast
 
     def selector(self, ast):  # noqa

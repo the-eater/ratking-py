@@ -37,7 +37,6 @@ version_op
     | less_than_op
     | about_op
     | exact_op
-    | binary_op
     ;
 
 exact_op
@@ -83,6 +82,13 @@ less_than_op
     | 'lt'
     ;
 
+range_op
+    =
+    | 'between' version 'and' version
+    | `between` version '..' version
+    | ( 'from' | `from` ) version ( 'to' | '-' | '...' ) version
+    ;
+
 expression
     =
     | union
@@ -91,9 +97,14 @@ expression
 
 union = left:selector mid:comb_op right:expression ;
 
+version_selector = ( version_op | `"="` ) version ;
+
+invert = binary_op selector ;
+
 selector
     =
-    | ( version_op | `"="` ) version
-    | binary_op selector
+    | range_op
+    | version_selector
+    | invert
     | '(' @:expression ')'
     ;
