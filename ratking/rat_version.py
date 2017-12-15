@@ -36,9 +36,6 @@ class RatVersion:
         if len(self.parts) > len(self.separators):
             self.separators.append('')
 
-    def __eq__(self, other):
-        return self.__cmp__(other) == 0
-
     def __cmp__(self, other):
         for i in range(0, max(len(self.parts), len(other.parts))):
             left = self.parts[i] if i < len(self.parts) else 0
@@ -78,6 +75,9 @@ class RatVersion:
     def strip(self, length=1):
         return 'v' + ''.join([x + z for x, z in zip(self.parts[:length], self.separators[:length])])
 
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
     def __repr__(self):
         return 'v' + ''.join([x + z for x, z in zip(self.parts, self.separators)])
 
@@ -94,4 +94,4 @@ class RatVersion:
         return self.__cmp__(other) >= 0
 
     def __ne__(self, other):
-        return not self == other
+        return self.__cmp__(other) != 0

@@ -1,4 +1,5 @@
 import os
+import sys
 from pprint import pprint
 from docopt import docopt
 from . import Ratking, RatVersion
@@ -16,22 +17,27 @@ class Runtime:
 
     def main(self):
         """
-rk - ratking's all purpose package manager
+{0} - ratking's all purpose package manager
 
 Usage:
-    rk install [--repo=<repo>] <installable>...
-    rk remove <name>
-    rk list-rats <repo>
-    rk resolve [--repo=<repo>] <installable>...
-    rk version-selector [--test=<version>] <version-selector>
-    rk (-v | -h)
+    {0} install [--repo=<repo>] <installable>...
+    {0} remove <name>
+    {0} list-rats <repo>
+    {0} resolve [--repo=<repo>] <installable>...
+    {0} version-selector [--test=<version>] <version-selector>
+    {0} (-v | -h)
 
 Options:
     -h --help     Show this page
     -v --version  Show version of rk
     --repo=<repo> -r=<repo>    Select repo to use for this action
         """
-        arguments = docopt(str(self.main.__doc__), version="ratking v0.1")
+        arg0 = 'rk'
+
+        # if sys.argv[0] != arg0:
+        #    arg0 = 'python3 -m ratking'
+
+        arguments = docopt(str.format(str(self.main.__doc__), arg0), version="ratking v0.1")
 
         if arguments['resolve']:
             self.cmd_resolve(arguments)
