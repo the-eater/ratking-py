@@ -20,7 +20,7 @@ class RatSelector:
 
     @staticmethod
     def from_str(rat_str):
-        parts = rat_str.split('=', 2)
+        parts = rat_str.split('=', maxsplit=1)
 
         name = parts[0]
         version_selector = parts[1] if len(parts) > 1 else 'any'

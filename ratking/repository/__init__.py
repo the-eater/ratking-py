@@ -3,5 +3,6 @@ from .generic_repository import GenericRepository
 from .union_repository import UnionRepository
 from .memory_repository import MemoryRepository
 from .repository_factory import *
+from .composer_repository import ComposerRepository
 
-__all__ = ["FlatFileRepository", "GenericRepository", "UnionRepository", "MemoryRepository", "build_repository"]
+__all__ = ["FlatFileRepository", "GenericRepository", "UnionRepository", "MemoryRepository", "ComposerRepository", "build_repository"]

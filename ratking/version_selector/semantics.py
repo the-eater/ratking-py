@@ -23,6 +23,9 @@ class VersionSelectorSemantics(SelectorSemantics):
         return '='
 
     def about_op(self, ast):
+        if ast == '^':
+            return '^'
+
         return '~'
 
     def greater_than_equals_op(self, ast):
@@ -53,6 +56,9 @@ class VersionSelectorSemantics(SelectorSemantics):
         return InverseClause(ast[1])
 
     def version_selector(self, ast):
+        if ast[0] in ['~', '^']:
+            return AboutClause(ast[0], ast[1])
+
         return SimpleClause(ast[0], ast[1])
 
     def range_op(self, ast):

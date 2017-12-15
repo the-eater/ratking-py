@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 from docopt import docopt
 from . import Ratking, RatVersion
 from .repository import FlatFileRepository, build_repository
@@ -56,7 +57,7 @@ Options:
 
         rats = self.ratking.resolve([RatSelector.from_str(selector) for selector in arguments['<installable>']])
 
-        print(rats)
+        pprint(rats)
 
     def cmd_version_selector(self, arguments):
         parser = SelectorParser()

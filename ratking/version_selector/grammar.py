@@ -86,11 +86,13 @@ class SelectorParser(Parser):
 
     @tatsumasu()
     def _version_(self):  # noqa
-        self._pattern(r'v?[0-9][a-z0-9-*_\.]*')
+        self._pattern(r'v?[0-9][a-z0-9-*_\.@]*')
 
     @tatsumasu()
     def _and_op_(self):  # noqa
         with self._choice():
+            with self._option():
+                self._token(',')
             with self._option():
                 self._token('&')
             with self._option():
@@ -102,6 +104,8 @@ class SelectorParser(Parser):
     @tatsumasu()
     def _or_op_(self):  # noqa
         with self._choice():
+            with self._option():
+                self._token('||')
             with self._option():
                 self._token('|')
             with self._option():
@@ -165,6 +169,8 @@ class SelectorParser(Parser):
                 self._token('about')
             with self._option():
                 self._token('abt')
+            with self._option():
+                self._token('^')
             self._error('no available options')
 
     @tatsumasu()
@@ -186,7 +192,7 @@ class SelectorParser(Parser):
     def _less_than_equals_op_(self):  # noqa
         with self._choice():
             with self._option():
-                self._token('>=')
+                self._token('<=')
             with self._option():
                 self._token('less')
                 self._token('than')

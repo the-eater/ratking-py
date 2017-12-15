@@ -1,7 +1,7 @@
 class RatVersion:
-    known_seperators = ['-', '_', '.']
+    known_seperators = ['-', '_', '.', '@']
 
-    pre_release = ['beta', 'alpha', 'rc', 'pre-release', 'pre', 'prelease']
+    pre_release = ['beta', 'alpha', 'rc', 'pre-release', 'pre', 'prelease', 'dev']
 
     parts = None
     separators = None
@@ -9,6 +9,8 @@ class RatVersion:
     def __init__(self, version_str):
         self.parts = []
         self.separators = []
+        version_str = str(version_str)
+
         if version_str[0] == 'v':
             version_str = version_str[1:]
 
@@ -28,7 +30,8 @@ class RatVersion:
 
             part += c
 
-        self.parts.append(part)
+        if part != '':
+            self.parts.append(part)
 
         if len(self.parts) > len(self.separators):
             self.separators.append('')
@@ -59,7 +62,7 @@ class RatVersion:
                 return 0
 
             if (isinstance(left, int) or (isinstance(left, str) and left.isdigit())) and \
-                    (isinstance(right, str) or (isinstance(right, str) and right.isdigit())):
+                    (isinstance(right, int) or (isinstance(right, str) and right.isdigit())):
                 left = int(left)
                 right = int(right)
 
@@ -71,6 +74,9 @@ class RatVersion:
                 return 1 if left > right else -1
 
         return 0
+
+    def strip(self, length=1):
+        return 'v' + ''.join([x + z for x, z in zip(self.parts[:length], self.separators[:length])])
 
     def __repr__(self):
         return 'v' + ''.join([x + z for x, z in zip(self.parts, self.separators)])
