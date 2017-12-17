@@ -2,7 +2,15 @@ from .flat_file_repository import FlatFileRepository
 from .generic_repository import GenericRepository
 from .union_repository import UnionRepository
 from .memory_repository import MemoryRepository
-from .repository_factory import *
-from .composer_repository import ComposerRepository
+from .caching_repository import CachingRepository
 
-__all__ = ["FlatFileRepository", "GenericRepository", "UnionRepository", "MemoryRepository", "ComposerRepository", "build_repository"]
+from .repository_factory import *
+
+__all__ = [
+    "FlatFileRepository",
+    "GenericRepository",
+    "UnionRepository",
+    "MemoryRepository",
+    "CachingRepository",
+    "build_repository"
+]

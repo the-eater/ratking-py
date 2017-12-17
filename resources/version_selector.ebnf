@@ -2,11 +2,12 @@
 
 start = expression $ ;
 
-version = /v?[0-9][a-z0-9-*_\.@]*/ ;
+version = /[a-zA-Z0-9-*_\.@\+]+/ ;
 
 and_op
     =
     | ','
+    | '&&'
     | '&'
     | 'and'
     | 'but'
@@ -104,7 +105,7 @@ expression
     | selector
     ;
 
-union = left:selector mid:comb_op right:expression ;
+union = left:selector mid:( comb_op | `"&"` ) right:expression ;
 
 version_selector = ( version_op | `"="` ) version ;
 
@@ -114,7 +115,7 @@ selector
     =
     | any_op
     | range_op
-    | version_selector
     | invert
     | '(' @:expression ')'
+    | version_selector
     ;

@@ -17,7 +17,7 @@ class VersionSelectorSemantics(SelectorSemantics):
         return ast
 
     def version(self, ast):
-        return RatVersion(ast)
+        return RatVersion.from_str(ast)
 
     def exact_op(self, ast):
         return '='

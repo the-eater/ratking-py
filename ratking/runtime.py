@@ -20,17 +20,18 @@ class Runtime:
 {0} - ratking's all purpose package manager
 
 Usage:
-    {0} install [--repo=<repo>] <installable>...
+    {0} install <options> <installable>...
     {0} remove <name>
     {0} list-rats <repo>
-    {0} resolve [--repo=<repo>] <installable>...
+    {0} resolve [--repo=<repo>]... [--cache-repo=<repo>]...  <installable>...
     {0} version-selector [--test=<version>] <version-selector>
     {0} (-v | -h)
 
 Options:
     -h --help     Show this page
     -v --version  Show version of rk
-    --repo=<repo> -r=<repo>    Select repo to use for this action
+    --repo=<repo>...  Select repo to use for this action
+    --cache-repo=<repo>  Select repo to use to cache all successful queries
         """
         arg0 = 'rk'
 
@@ -48,15 +49,20 @@ Options:
     def load_ratking(self, arguments):
         self.ratking = Ratking()
 
-        os.makedirs(self.home, exist_ok=True)
-        local_repo = FlatFileRepository(self.home + "/local_repo.toml", read_only=False)
+        # os.makedirs(self.home, exist_ok=True)
+        # local_repo = FlatFileRepository(self.home + "/local_repo.toml", read_only=False)
 
-        self.ratking.add_repository(local_repo)
+        # self.ratking.add_repository(local_repo)
 
-        if arguments['--repo']:
-            repo = build_repository(arguments['--repo'])
-            if repo is not None:
-                self.ratking.add_repository(repo)
+        for repo in arguments['--repo']:
+            build_repo = build_repository(repo)
+            if build_repo is not None:
+                self.ratking.add_repository(build_repo)
+
+        for repo in arguments['--cache-repo']:
+            build_repo = build_repository(repo)
+            if build_repo is not None:
+                self.ratking.add_cache_repository(build_repo)
 
     def cmd_resolve(self, arguments):
         self.load_ratking(arguments)
@@ -72,5 +78,5 @@ Options:
         print(result_selector)
 
         if arguments['--test']:
-            version = RatVersion(arguments['--test'])
+            version = RatVersion.from_str(arguments['--test'])
             print('tested with %s: %s' % (version, result_selector.test(version)))

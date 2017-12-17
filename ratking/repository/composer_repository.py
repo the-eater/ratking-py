@@ -1,6 +1,7 @@
 from .generic_repository import GenericRepository
 from ..rat import Rat
 from ..rat_version import RatVersion
+from ..dist_object import ZipDistObject
 import requests
 
 
@@ -25,13 +26,21 @@ class ComposerRepository(GenericRepository):
         versions = resp.json().get('packages', {name: {}}).get(name, {}).values()
 
         rats = [
-            Rat.from_dict({
-                'name': version.get('name', name),
-                'version': version.get('version'),
-                'needs': dict(
-                    [(need_name, need_selector) for (need_name, need_selector) in version.get('require', {}).items() if
-                     '/' in need_name])
-            }) for version in versions if '-dev' not in version.get('version')]
+            Rat.from_dict(dict((
+                ('name', version.get('name', name)),
+                ('version', version.get('version')),
+                (
+                    'needs',
+                    dict(
+                        [(need_name, need_selector) for (need_name, need_selector) in version.get('require', {}).items()
+                         if
+                         '/' in need_name]),
+                ),
+                (
+                    'dist_objects',
+                    None if 'dist' not in version else ZipDistObject(version.get('dist', {}).get('url', None)))
+                )
+            )) for version in versions if '-dev' not in version.get('version')]
 
         rats.sort(key=lambda item: item.version, reverse=True)
 

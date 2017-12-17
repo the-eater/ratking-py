@@ -1,4 +1,4 @@
-from .version_selector import SelectorParser, VersionSelectorSemantics
+from .version_selector import parse_version_selector
 
 
 class RatSelector:
@@ -32,7 +32,7 @@ class RatSelector:
     def from_str_pair(name, selector):
         return RatSelector(
             name,
-            SelectorParser().parse(selector, semantics=VersionSelectorSemantics())
+            parse_version_selector(selector)
         )
 
     @staticmethod

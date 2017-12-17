@@ -86,13 +86,15 @@ class SelectorParser(Parser):
 
     @tatsumasu()
     def _version_(self):  # noqa
-        self._pattern(r'v?[0-9][a-z0-9-*_\.@]*')
+        self._pattern(r'[a-zA-Z0-9-*_\.@\+]+')
 
     @tatsumasu()
     def _and_op_(self):  # noqa
         with self._choice():
             with self._option():
                 self._token(',')
+            with self._option():
+                self._token('&&')
             with self._option():
                 self._token('&')
             with self._option():
@@ -283,7 +285,13 @@ class SelectorParser(Parser):
     def _union_(self):  # noqa
         self._selector_()
         self.name_last_node('left')
-        self._comb_op_()
+        with self._group():
+            with self._choice():
+                with self._option():
+                    self._comb_op_()
+                with self._option():
+                    self._constant('&')
+                self._error('no available options')
         self.name_last_node('mid')
         self._expression_()
         self.name_last_node('right')
@@ -316,14 +324,14 @@ class SelectorParser(Parser):
             with self._option():
                 self._range_op_()
             with self._option():
-                self._version_selector_()
-            with self._option():
                 self._invert_()
             with self._option():
                 self._token('(')
                 self._expression_()
                 self.name_last_node('@')
                 self._token(')')
+            with self._option():
+                self._version_selector_()
             self._error('no available options')
 
 

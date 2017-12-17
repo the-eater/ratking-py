@@ -14,8 +14,11 @@ class UnionRepository(GenericRepository):
         self.loaded = True
 
     def get_versions(self, name):
+        versions = []
         for repo in self.repositories:
-            yield from repo.get_versions(name)
+            versions.extend(repo.get_versions(name))
+
+        return versions
 
     def get(self, name, version):
         for repo in self.repositories:

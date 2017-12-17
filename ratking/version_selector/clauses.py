@@ -1,5 +1,5 @@
 from ..rat_version import RatVersion
-
+from copy import deepcopy
 
 class GenericClause:
     def test(self, value):
@@ -68,33 +68,17 @@ class SimpleClause(GenericClause):
 
 
 class AboutClause(SimpleClause):
-    depth = 1
-    bottom = None
-    top = None
-
     def __init__(self, op, version):
-        super().__init__(op, version)
+        if version.parts[0].is_numeric:
+            new_version = deepcopy(version)
+            depth = 1 if op == '^' else 2
+            while len(new_version.parts[0].parts) <= depth:
+                new_version.parts[0].parts.append(0)
 
-        if self.op == '~':
-            for i in range(0, len(self.version.parts)):
-                if self.version.parts[i] in RatVersion.pre_release:
-                    break
+            new_version.parts[0].parts[1 if op == '^' else 2] = '*'
+            version = new_version
 
-                self.depth = i + 1
-
-        self.bottom = SimpleClause('>=', RatVersion(self.version.strip(self.depth)))
-        top_version = RatVersion(self.version.strip(self.depth))
-        last_part = top_version.parts[-1]
-
-        if isinstance(last_part, int) or last_part.isdigit():
-            last_part = int(last_part) + 1
-
-        top_version.parts[-1] = last_part
-
-        self.top = SimpleClause('<', top_version)
-
-    def test(self, value):
-        return AndClause(self.bottom, self.top).test(value)
+        super().__init__('=', version)
 
 
 class InverseClause(GenericClause):

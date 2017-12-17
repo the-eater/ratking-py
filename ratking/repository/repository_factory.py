@@ -14,6 +14,11 @@ def build_repository(url):
         return FlatFileRepository(path)
 
     if repo_type == 'composer':
+        from .composer_repository import ComposerRepository
         return ComposerRepository(path)
+
+    if repo_type == 'rk':
+        from .ratking_repository import RatkingRepository
+        return RatkingRepository(path)
 
     return None
