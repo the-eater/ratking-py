@@ -19,6 +19,12 @@ class CachingRepository(UnionRepository):
         self.cache_repositories.append(repository)
 
     def get_versions(self, name):
+        for cache_repo in self.cache_repositories:
+            rats = cache_repo.get_versions(name)
+
+            if len(rats) > 0:
+                return rats
+
         versions = super().get_versions(name)
 
         for version in versions:
@@ -27,8 +33,14 @@ class CachingRepository(UnionRepository):
         return versions
 
     def get(self, name, version):
+        for cache_repo in self.cache_repositories:
+            rat = cache_repo.get(name, version)
+
+            if rat is not None:
+                return rat
+
         rat = super().get(name, version)
-        if rat is None:
+        if rat is not None:
             super().put(rat)
 
         return rat

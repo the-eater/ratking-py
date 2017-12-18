@@ -178,6 +178,12 @@ class RatVersionPart:
             if left == '*' or right == '*':
                 return 0
 
+            if left == '':
+                left = 0
+
+            if right == '':
+                right = 0
+
             if left != right:
                 return 1 if left > right else -1
 

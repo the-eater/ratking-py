@@ -1,4 +1,4 @@
-from .version_selector import parse_version_selector
+from .version_selector import parse_version_selector, clause_from_dict
 
 
 class RatSelector:
@@ -16,7 +16,17 @@ class RatSelector:
         return self.version_selector.test(rat.version)
 
     def __repr__(self):
-        return self.name + '=' + str(self.version_selector)
+        return self.name + ': ' + str(self.version_selector)
+
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'selector': self.version_selector.to_dict()
+        }
+
+    @staticmethod
+    def from_dict(selector_dict):
+        return RatSelector(selector_dict['name'], clause_from_dict(selector_dict['selector']))
 
     @staticmethod
     def from_str(rat_str):
@@ -26,7 +36,6 @@ class RatSelector:
         version_selector = parts[1] if len(parts) > 1 else 'any'
 
         return RatSelector.from_str_pair(name, version_selector)
-
 
     @staticmethod
     def from_str_pair(name, selector):
@@ -40,4 +49,5 @@ class RatSelector:
         if isinstance(collection, dict):
             return [RatSelector.from_str_pair(name, selector) for (name, selector) in collection.items()]
 
-        return [RatSelector.from_str(selector) for selector in collection]
+        return [RatSelector.from_str(selector) if isinstance(selector, str) else RatSelector.from_dict(selector) for
+                selector in collection]

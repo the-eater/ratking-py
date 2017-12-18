@@ -7,3 +7,9 @@ class GitDistObject(GenericDistObject):
 
     def __init__(self, uri):
         self.uri = uri
+
+    def to_json(self):
+        return {
+            'type': 'git',
+            'uri': self.uri
+        }

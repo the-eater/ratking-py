@@ -1,6 +1,7 @@
 from .rat_version import RatVersion
 from .rat_selector import RatSelector
-
+from .dist_object import dist_object_from_dict
+import json
 
 class Rat:
     name = None
@@ -12,12 +13,12 @@ class Rat:
     dist_objects = None
 
     def __repr__(self):
-        return 'Rat(name=%s, version=%s)' % (self.name, self.version)
+        return 'Rat(name=%s, version=%s)' % (self.name, self.version.__repr__())
 
     def __init__(self, name, version, alias=None, needs=None, conflicts=None, provides=None, dist_objects=None):
         self.name = name
         self.version = version
-        self.alias = [] if alias is None else alias
+        self.alias = alias
         self.needs = [] if needs is None else needs
         self.conflicts = [] if conflicts is None else conflicts
         self.provides = [] if provides is None else provides
@@ -33,5 +34,16 @@ class Rat:
             needs=RatSelector.get_collection(rat_dict.get('needs', [])),
             conflicts=rat_dict.get('conflicts', None),
             provides=rat_dict.get('provides', None),
-            dist_objects=rat_dict.get('dist_objects', None)
+            dist_objects=[dist_object_from_dict(obj) if isinstance(obj, dict) else obj for obj in rat_dict.get('dist_objects', None)]
         )
+
+    def to_json(self):
+        return json.dumps({
+            'name': self.name,
+            'version': str(self.version),
+            'alias': self.alias,
+            'needs': [need.to_dict() for need in self.needs],
+            'conflicts': self.conflicts,
+            'provides': self.provides,
+            'dist_objects': [dist.to_json() for dist in self.dist_objects]
+        })

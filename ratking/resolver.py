@@ -22,6 +22,8 @@ class Resolver:
         rats = self.repo.get_by_selector(selector)
 
         for rat in rats:
+            if rat.version.channel == 'devel':
+                continue
 
             current_selection[rat.name] = rat
             result = self.resolve(selectors[1:] + rat.needs, current_selection)
