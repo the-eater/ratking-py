@@ -11,11 +11,13 @@ class Rat:
     conflicts = None
     provides = None
     dist_objects = None
+    repo = None
+    is_virtual = False
 
     def __repr__(self):
         return 'Rat(name=%s, version=%s)' % (self.name, self.version.__repr__())
 
-    def __init__(self, name, version, alias=None, needs=None, conflicts=None, provides=None, dist_objects=None):
+    def __init__(self, name, version, alias=None, needs=None, conflicts=None, provides=None, dist_objects=None, repo=None):
         self.name = name
         self.version = version
         self.alias = alias
@@ -23,9 +25,10 @@ class Rat:
         self.conflicts = [] if conflicts is None else conflicts
         self.provides = [] if provides is None else provides
         self.dist_objects = [] if dist_objects is None else dist_objects
+        self.repo = repo
 
     @staticmethod
-    def from_dict(rat_dict):
+    def from_dict(rat_dict, repo=None):
         return Rat(
             rat_dict['name'],
             rat_dict['version'] if isinstance(rat_dict['version'], RatVersion) else RatVersion.from_str(
@@ -34,7 +37,8 @@ class Rat:
             needs=RatSelector.get_collection(rat_dict.get('needs', [])),
             conflicts=rat_dict.get('conflicts', None),
             provides=rat_dict.get('provides', None),
-            dist_objects=[dist_object_from_dict(obj) if isinstance(obj, dict) else obj for obj in rat_dict.get('dist_objects', None)]
+            dist_objects=[dist_object_from_dict(obj) if isinstance(obj, dict) else obj for obj in rat_dict.get('dist_objects', None)],
+            repo=repo
         )
 
     def to_json(self):

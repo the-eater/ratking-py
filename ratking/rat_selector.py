@@ -2,21 +2,23 @@ from .version_selector import parse_version_selector, clause_from_dict
 
 
 class RatSelector:
+    manual = False
     name = None
     version_selector = None
 
-    def __init__(self, name, version_selector):
+    def __init__(self, name, version_selector, manual=False):
         self.name = name
         self.version_selector = version_selector
+        self.manual = manual
 
     def matches(self, rat):
-        if rat.name != self.name:
+        if rat.name != self.name and self.name not in rat.provides:
             return False
 
         return self.version_selector.test(rat.version)
 
     def __repr__(self):
-        return self.name + ': ' + str(self.version_selector)
+        return 'RatSelector("%s", %s)' % (self.name, str(self.version_selector))
 
     def to_dict(self):
         return {
@@ -29,19 +31,20 @@ class RatSelector:
         return RatSelector(selector_dict['name'], clause_from_dict(selector_dict['selector']))
 
     @staticmethod
-    def from_str(rat_str):
+    def from_str(rat_str, manual=False):
         parts = rat_str.split('=', maxsplit=1)
 
         name = parts[0]
         version_selector = parts[1] if len(parts) > 1 else 'any'
 
-        return RatSelector.from_str_pair(name, version_selector)
+        return RatSelector.from_str_pair(name, version_selector, manual=manual)
 
     @staticmethod
-    def from_str_pair(name, selector):
+    def from_str_pair(name, selector, manual=False):
         return RatSelector(
             name,
-            parse_version_selector(selector)
+            parse_version_selector(selector),
+            manual=manual
         )
 
     @staticmethod

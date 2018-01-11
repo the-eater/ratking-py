@@ -3,6 +3,7 @@ from .generic_repository import GenericRepository
 from .union_repository import UnionRepository
 from .memory_repository import MemoryRepository
 from .caching_repository import CachingRepository
+from .ratking_repository import RatkingRepository
 
 from .repository_factory import *
 
@@ -12,5 +13,6 @@ __all__ = [
     "UnionRepository",
     "MemoryRepository",
     "CachingRepository",
-    "build_repository"
+    "RatkingRepository",
+    "build_repository",
 ]

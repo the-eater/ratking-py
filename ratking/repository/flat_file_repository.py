@@ -11,10 +11,10 @@ class FlatFileRepository(MemoryRepository):
     rats = None
 
     def __init__(self, file, read_only=True):
-        super().__init__([], None)
+        super().__init__({}, None)
         self.file = file
         self.read_only = read_only
-        self.rats = []
+        self.rats = {}
         self.name = "Nameless flat-file repo"
 
     def save(self):
@@ -24,7 +24,7 @@ class FlatFileRepository(MemoryRepository):
         rats_file = open(self.file, 'w+')
         toml.dump(
             {
-                'rats': self.rats,
+                'rats': [rat for versions in self.rats.values() for rat in versions],
                 'name': self.name
             },
             rats_file
@@ -43,7 +43,9 @@ class FlatFileRepository(MemoryRepository):
         rats_file = open(self.file, 'r+')
         repo = toml.load(rats_file)
         rats = repo['rats'] if 'rats' in repo else []
-        self.rats = [Rat.from_dict(rat) for rat in rats]
+        for rat in rats:
+            self.index(Rat.from_dict(rat))
+
         self.name = repo['name'] if 'name' in repo else "Nameless flat-file repo"
         rats_file.close()
         self.loaded = True

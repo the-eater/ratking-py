@@ -1,3 +1,5 @@
+from .rat_fulfillment import RatFulfillment
+
 class Resolver:
     repo = None
 
@@ -14,7 +16,7 @@ class Resolver:
         selector = selectors[0]
 
         if selector.name in current_selection:
-            if selector.matches(current_selection[selector.name]):
+            if selector.matches(current_selection[selector.name].rat):
                 return self.resolve(selectors[1:], current_selection)
             else:
                 return None
@@ -25,7 +27,7 @@ class Resolver:
             if rat.version.channel == 'devel':
                 continue
 
-            current_selection[rat.name] = rat
+            current_selection[selector.name] = RatFulfillment(rat=rat, manual=selector.manual)
             result = self.resolve(selectors[1:] + rat.needs, current_selection)
 
             if result is not None:

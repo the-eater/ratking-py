@@ -28,8 +28,8 @@ class UnionRepository(GenericRepository):
 
         return None
 
-    def add_repository(self, repository):
-        if not repository.loaded:
+    def add_repository(self, repository, load=True):
+        if not repository.loaded and load:
             repository.load()
 
         self.repositories.append(repository)

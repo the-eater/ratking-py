@@ -2,6 +2,8 @@ from pprint import pprint
 
 
 class RatVersion:
+    bottom = None
+
     cache = {}
     separators = ['-', '.', '_', '@', '+']
 
@@ -14,8 +16,8 @@ class RatVersion:
     metadata = None
     is_pre_release = False
 
-    def __init__(self):
-        self.parts = []
+    def __init__(self, parts=None):
+        self.parts = parts if parts is not None else []
 
     @staticmethod
     def from_str(version_str):
@@ -199,3 +201,6 @@ class RatVersionPart:
             return 1 if left > right else -1
 
         return 0
+
+
+RatVersion.bottom = RatVersion(parts=[RatVersionPart(parts=[-1], is_start=True)])

@@ -9,21 +9,24 @@ from .rat_selector import RatSelector
 
 
 class Runtime:
+    exec = 'rk'
+    description = 'ratking\'s all purpose package manager'
     ratking = None
     home = None
 
     def __init__(self):
         self.home = os.path.expanduser('~/.config/rk')
+        self.ratking = Ratking()
 
     def main(self):
         """
-{0} - ratking's all purpose package manager
+{0} - {1}
 
 Usage:
     {0} install <options> <installable>...
     {0} remove <name>
-    {0} list-rats <repo>
-    {0} resolve [--repo=<repo>]... [--cache-repo=<repo>]...  <installable>...
+    {0} list <repo>
+    {0} resolve [--missing] [--repo=<repo>]... [--cache-repo=<repo>]...  <installable>...
     {0} version-selector [--test=<version>] <version-selector>
     {0} (-v | -h)
 
@@ -33,12 +36,8 @@ Options:
     --repo=<repo>...  Select repo to use for this action
     --cache-repo=<repo>  Select repo to use to cache all successful queries
         """
-        arg0 = 'rk'
 
-        # if sys.argv[0] != arg0:
-        #    arg0 = 'python3 -m ratking'
-
-        arguments = docopt(str.format(str(self.main.__doc__), arg0), version="ratking v0.1")
+        arguments = docopt(str.format(str(self.main.__doc__), self.exec, self.description), version="ratking v0.1")
 
         if arguments['resolve']:
             self.cmd_resolve(arguments)
@@ -47,8 +46,6 @@ Options:
             self.cmd_version_selector(arguments)
 
     def load_ratking(self, arguments):
-        self.ratking = Ratking()
-
         # os.makedirs(self.home, exist_ok=True)
         # local_repo = FlatFileRepository(self.home + "/local_repo.toml", read_only=False)
 
@@ -67,7 +64,14 @@ Options:
     def cmd_resolve(self, arguments):
         self.load_ratking(arguments)
 
-        rats = self.ratking.resolve([RatSelector.from_str(selector) for selector in arguments['<installable>']])
+        selectors = [RatSelector.from_str(selector, manual=True) for selector in arguments['<installable>']]
+
+        rats = {}
+
+        if arguments['--missing']:
+            rats = self.ratking.resolve_missing(selectors)
+        else:
+            rats = self.ratking.resolve(selectors)
 
         pprint(rats)
 

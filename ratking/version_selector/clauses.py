@@ -1,7 +1,6 @@
 from ..rat_version import RatVersion
 from copy import deepcopy
 
-
 class GenericClause:
     def test(self, value):
         pass

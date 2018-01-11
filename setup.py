@@ -7,10 +7,15 @@ setup(
     author="eater.",
     author_email="python@eater.me",
     url="https://github.com/the-eater/ratking-py",
-    py_modules=['ratkings'],
+    packages=[
+        'ratking',
+        'ratking.repository',
+        'ratking.dist_object',
+        'ratking.version_selector'
+    ],
 
     entry_points={
-        'console_scripts': ['rk=ratking'],
+        'console_scripts': ['rk=ratking:main'],
     },
     install_requires=[
         'toml',
