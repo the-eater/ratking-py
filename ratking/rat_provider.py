@@ -7,8 +7,8 @@ from .version_selector.clauses import SimpleClause
 class RatProvider(Rat):
     is_virtual = True
 
-    def __init__(self, name, parent):
-        super().__init__(name, version=RatVersion.bottom)
+    def __init__(self, name, parent, version=RatVersion.bottom):
+        super().__init__(name, version=version)
         self.is_virtual = True
         self.needs = [
             RatSelector(name=parent.name, version_selector=SimpleClause('=', parent.version))

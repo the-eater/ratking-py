@@ -1,12 +1,9 @@
 from .rat_fulfillment import RatFulfillment
 
+
 class Resolver:
-    repo = None
-
-    def __init__(self, repo):
-        self.repo = repo
-
-    def resolve(self, selectors, current_selection=None):
+    @staticmethod
+    def resolve(selectors, repo, current_selection=None, local_repo=None):
         if current_selection is None:
             current_selection = {}
 
@@ -17,18 +14,30 @@ class Resolver:
 
         if selector.name in current_selection:
             if selector.matches(current_selection[selector.name].rat):
-                return self.resolve(selectors[1:], current_selection)
+                return Resolver.resolve(selectors[1:], repo, current_selection, local_repo=local_repo)
             else:
                 return None
 
-        rats = self.repo.get_by_selector(selector)
+        if local_repo is not None:
+            rats = local_repo.get_by_selector(selector)
+            result = Resolver.resolve_from_selection(rats, selector, selectors, repo, current_selection, local_repo=local_repo)
+            if result is not None:
+                return result
+
+        rats = repo.get_by_selector(selector)
+
+        return Resolver.resolve_from_selection(rats, selector, selectors, repo, current_selection, local_repo=local_repo)
+
+    @staticmethod
+    def resolve_from_selection(rats, selector, selectors, repo, current_selection=None, local_repo=None):
+        current_selection = {} if current_selection is None else current_selection
 
         for rat in rats:
             if rat.version.channel == 'devel':
                 continue
 
             current_selection[selector.name] = RatFulfillment(rat=rat, manual=selector.manual)
-            result = self.resolve(selectors[1:] + rat.needs, current_selection)
+            result = Resolver.resolve(selectors[1:] + rat.needs, repo, current_selection, local_repo=local_repo)
 
             if result is not None:
                 return result

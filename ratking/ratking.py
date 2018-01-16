@@ -21,7 +21,7 @@ class Ratking:
         if not self.remote_repo.loaded:
             self.remote_repo.load()
 
-        return Resolver(self.remote_repo).resolve(selectors)
+        return Resolver.resolve(selectors, repo=self.remote_repo, local_repo=self.local_repo)
 
     def resolve_missing(self, selectors):
         fulfillments = self.resolve(selectors)
@@ -37,7 +37,7 @@ class Ratking:
             if isinstance(rat, RatProvider):
                 continue
 
-            if fulfillment.repo is self.local_repo or self.local_repo.get(rat.name, rat.version):
+            if fulfillment.repo is self.local_repo or len(self.local_repo.get_versions(rat.name)) > 0:
                 continue
 
             missing[key] = fulfillment

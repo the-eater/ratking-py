@@ -20,7 +20,7 @@ class MemoryRepository(GenericRepository):
         self.index_name(rat, rat.name)
 
         for provide in rat.provides:
-            self.index_name(RatProvider(provide, rat), provide)
+            self.index_name(provide, provide.name)
 
     def get(self, name, version):
         if name not in self.rats:
