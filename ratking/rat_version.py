@@ -19,6 +19,9 @@ class RatVersion:
     def __init__(self, parts=None):
         self.parts = parts if parts is not None else []
 
+    def to_str(self):
+        return str(self)
+
     @staticmethod
     def from_str(version_str):
         if version_str in RatVersion.cache:

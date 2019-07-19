@@ -8,7 +8,7 @@ class GitDistObject(GenericDistObject):
     def __init__(self, uri):
         self.uri = uri
 
-    def to_json(self):
+    def to_dict(self):
         return {
             'type': 'git',
             'uri': self.uri

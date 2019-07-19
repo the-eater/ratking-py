@@ -34,3 +34,6 @@ class MemoryRepository(GenericRepository):
 
     def get_versions(self, name):
         return self.rats[name] if name in self.rats else []
+
+    def put(self, rat):
+        self.index(rat)

@@ -23,6 +23,10 @@ class Ratking:
 
         return Resolver.resolve(selectors, repo=self.remote_repo, local_repo=self.local_repo)
 
+    def save(self):
+        self.local_repo.save()
+        self.remote_repo.save()
+
     def resolve_missing(self, selectors):
         fulfillments = self.resolve(selectors)
 

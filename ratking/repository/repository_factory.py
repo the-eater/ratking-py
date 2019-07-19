@@ -11,7 +11,14 @@ def build_repository(url):
     (repo_type, path) = parts
 
     if repo_type == 'flat':
-        return FlatFileRepository(path)
+        parts = path.split(':', maxsplit=1)
+        file = path
+        ro = False
+        if len(parts) == 2:
+            file = parts[1]
+            ro = parts[0] == 'ro'
+
+        return FlatFileRepository(file=file, read_only=ro)
 
     if repo_type == 'composer':
         from .composer_repository import ComposerRepository

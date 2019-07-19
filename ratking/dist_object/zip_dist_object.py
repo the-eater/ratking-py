@@ -8,7 +8,7 @@ class ZipDistObject(GenericDistObject):
     def __init__(self, path):
         self.path = path
 
-    def to_json(self):
+    def to_dict(self):
         return {
             'type': 'zip',
             'path': self.path

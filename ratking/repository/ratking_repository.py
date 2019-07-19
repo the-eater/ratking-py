@@ -44,5 +44,5 @@ class RatkingRepository(GenericRepository):
 
     def put(self, rat):
         self.db.execute('INSERT INTO rats(name, version, rat_json) VALUES (?, ?, ?)',
-                        (rat.name, str(rat.version), rat.to_json()))
+                        (rat.name, str(rat.version), rat.to_dict()))
         self.open_saves = True

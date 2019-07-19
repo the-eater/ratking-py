@@ -1,3 +1,5 @@
+from toml.encoder import TomlEncoder
+
 from .memory_repository import MemoryRepository
 from ratking import Rat
 import toml
@@ -8,25 +10,25 @@ class FlatFileRepository(MemoryRepository):
     file = None
     name = None
     read_only = True
-    rats = None
 
     def __init__(self, file, read_only=True):
         super().__init__({}, None)
         self.file = file
         self.read_only = read_only
-        self.rats = {}
         self.name = "Nameless flat-file repo"
 
     def save(self):
         if self.read_only:
             return
 
+        big_dict = {
+            'name': self.name,
+            'rats': [rat.to_dict() for versions in self.rats.values() for rat in versions]
+        }
+
         rats_file = open(self.file, 'w+')
         toml.dump(
-            {
-                'rats': [rat for versions in self.rats.values() for rat in versions],
-                'name': self.name
-            },
+            big_dict,
             rats_file
         )
 

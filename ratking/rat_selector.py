@@ -23,7 +23,7 @@ class RatSelector:
     def to_dict(self):
         return {
             'name': self.name,
-            'selector': self.version_selector.to_dict()
+            'selector': self.version_selector.to_str()
         }
 
     @staticmethod

@@ -13,5 +13,5 @@ class GenericDistObject:
     def get_path(self):
         pass
 
-    def to_json(self):
+    def to_dict(self):
         pass

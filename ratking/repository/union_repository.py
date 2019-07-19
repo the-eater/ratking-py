@@ -2,9 +2,12 @@ from .generic_repository import GenericRepository
 
 
 class UnionRepository(GenericRepository):
-    repositories = []
+    repositories = None
 
-    def __init__(self, repositories):
+    def __init__(self, repositories=None):
+        if repositories is None:
+            repositories = []
+
         self.repositories = repositories
 
     def load(self):

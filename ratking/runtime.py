@@ -46,20 +46,21 @@ Options:
             self.cmd_version_selector(arguments)
 
     def load_ratking(self, arguments):
-        # os.makedirs(self.home, exist_ok=True)
-        # local_repo = FlatFileRepository(self.home + "/local_repo.toml", read_only=False)
-
-        # self.ratking.add_repository(local_repo)
-
         for repo in arguments['--repo']:
             build_repo = build_repository(repo)
-            if build_repo is not None:
+            if build_repo:
                 self.ratking.add_repository(build_repo)
+                print("{} is added as repo".format(repo))
+            else:
+                print("{} is not a valid repo".format(repo))
 
         for repo in arguments['--cache-repo']:
             build_repo = build_repository(repo)
-            if build_repo is not None:
+            if build_repo:
                 self.ratking.add_cache_repository(build_repo)
+                print("{} is added as caching repo".format(repo))
+            else:
+                print("{} is not a valid repo".format(repo))
 
     def cmd_resolve(self, arguments):
         self.load_ratking(arguments)
@@ -73,6 +74,8 @@ Options:
         else:
             rats = self.ratking.resolve(selectors)
 
+        self.ratking.save()
+
         pprint(rats)
 
     def cmd_version_selector(self, arguments):
@@ -83,4 +86,4 @@ Options:
 
         if arguments['--test']:
             version = RatVersion.from_str(arguments['--test'])
-            print('tested with %s: %s' % (version, result_selector.test(version)))
+            print('tested {} against {}: {}'.format(version, result_selector.to_str(), result_selector.test(version)))

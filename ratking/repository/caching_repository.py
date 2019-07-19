@@ -41,7 +41,7 @@ class CachingRepository(UnionRepository):
 
         rat = super().get(name, version)
         if rat is not None:
-            super().put(rat)
+            self.put(rat)
 
         return rat
 
